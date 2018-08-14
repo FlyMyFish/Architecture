@@ -16,19 +16,13 @@ import butterknife.Unbinder;
 /**
  * @author shichen 754314442@qq.com
  * MVP-模式 所有Fragment需继承该父类，以便使用[友盟统计]
+ * 使用注解@ViewResId(layout = R.layout.activity_login_with_pwd)为容器添加布局
  * Created by Administrator on 2018/8/9.
  */
-public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<V>> extends RxFragment {
+public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<V>> extends RxFragment implements IBaseView{
     protected Unbinder unbinder;
     protected View rootView;
     protected P mPresenter;
-
-    /**
-     * 子类实现该方法返回Activity的布局resId
-     *
-     * @return resId
-     */
-    protected abstract int layout();
 
     /**
      * 子类实现该方法执行页面数据的初始化
@@ -45,7 +39,10 @@ public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(layout(), container, false);
+        int layoutResId = getClass().getAnnotation(ViewResId.class).layout();
+        if (layoutResId != ViewResId.LAYOUT_NOT_DEFINED) {
+            rootView = inflater.inflate(layoutResId, container, false);
+        }
         //初始化ButterKnife
         unbinder = ButterKnife.bind(this, rootView);
         //创建presenter
@@ -68,5 +65,6 @@ public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<
     public void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
+        mPresenter.detachView();
     }
 }
