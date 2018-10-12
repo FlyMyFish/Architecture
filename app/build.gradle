@@ -49,6 +49,10 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
     implementation "com.scwang.smartrefresh:SmartRefreshLayout:$rootProject.smartRefreshVsrsion"
     implementation "com.scwang.smartrefresh:SmartRefreshHeader:$rootProject.smartRefreshVsrsion"
+    //RecyclerViewAdapter https://github.com/hongyangAndroid/baseAdapter
+    implementation "com.zhy:base-rvadapter:$rootProject.rvAdapterVersion"
+    //二维码相关功能 https://github.com/yipianfengye/android-zxingLibrary
+    implementation project(':lib-zxing')
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

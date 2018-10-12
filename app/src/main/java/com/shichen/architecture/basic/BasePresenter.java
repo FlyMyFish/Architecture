@@ -1,32 +1,62 @@
 package com.shichen.architecture.basic;
 
+import android.os.Bundle;
+import android.support.annotation.CallSuper;
+
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
 /**
  * @author shichen 754314442@qq.com
- * MVP-模式Presenter父类，所有Presenter需继承该类
- * Created by Administrator on 2018/8/10.
+ * Created by Administrator on 2018/9/28.
  */
-public abstract class BasePresenter<V extends IBaseView> {
-    protected Reference<V> mViewRef;
+public abstract class BasePresenter<V extends BaseContract.View> implements BaseContract.Presenter<V> {
+    private Bundle stateBundle;
+    //弱引用view
+    private Reference<V> view;
 
-    public void attachView(V view) {
-        mViewRef = new WeakReference<V>(view);
+    @Override
+    public Bundle getStateBundle() {
+        return stateBundle == null
+                ? stateBundle = new Bundle()
+                : stateBundle;
     }
 
-    protected V getView() {
-        return mViewRef.get();
+    @Override
+    final public void attachView(V view) {
+        this.view = new WeakReference<>(view);
     }
 
-    public boolean isViewAttached() {
-        return mViewRef != null && mViewRef.get() != null;
+    @Override
+    final public void detachView() {
+        if (view != null) {
+            view.clear();
+            view = null;
+        }
     }
 
-    public void detachView() {
-        if (mViewRef != null) {
-            mViewRef.clear();
-            mViewRef = null;
+    @Override
+    final public V getView() {
+        return view.get();
+    }
+
+    @Override
+    final public boolean isViewAttached() {
+        return view != null && view.get() != null;
+    }
+
+    @CallSuper
+    @Override
+    public void onPresenterDestroy() {
+        if (stateBundle != null && !stateBundle.isEmpty()) {
+            stateBundle.clear();
+        }
+    }
+
+    @Override
+    public void onPresenterCreated() {
+        if (isViewAttached()) {
+            view.get().init();
         }
     }
 }

@@ -1,70 +1,95 @@
 package com.shichen.architecture.basic;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.shichen.architecture.utils.StatusUtil;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author shichen 754314442@qq.com
- * MVP-模式 所有Fragment需继承该父类，以便使用[友盟统计]
- * 使用注解@ViewResId(layout = R.layout.activity_login_with_pwd)为容器添加布局
- * Created by Administrator on 2018/8/9.
+ * Created by Administrator on 2018/9/28.
  */
-public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<V>> extends RxFragment implements IBaseView{
-    protected Unbinder unbinder;
-    protected View rootView;
-    protected P mPresenter;
+public abstract class BaseFragment<V extends BaseContract.View, P extends BaseContract.Presenter<V>> extends RxFragment implements BaseContract.View {
+    protected P presenter;
+    protected Unbinder mUnbinder;
+    protected final String TAG=getClass().getSimpleName();
 
-    /**
-     * 子类实现该方法执行页面数据的初始化
-     */
-    protected abstract void init();
-
-    /**
-     * 子类实现该方法返回Activity对应的Presenter逻辑处理类
-     *
-     * @return presenter
-     */
-    protected abstract P createPresenter();
+    @SuppressWarnings("unchecked")
+    @CallSuper
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        presenter = initPresenter();
+        presenter.attachView((V) this);
+        checkNotNull(presenter);
+        presenter.onPresenterCreated();
+        setStatusColor(Color.WHITE);
+        setSystemInvadeBlack(true);
+    }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        int layoutResId = getClass().getAnnotation(ViewResId.class).layout();
-        if (layoutResId != ViewResId.LAYOUT_NOT_DEFINED) {
-            rootView = inflater.inflate(layoutResId, container, false);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //使用注解的方式，添加布局以及presenter
+        int layoutResId = getClass().getAnnotation(Viewable.class).layout();
+        if (layoutResId != Viewable.LAYOUT_NOT_DEFINED) {
+            View view = inflater.inflate(layoutResId, container, false);
+            mUnbinder = ButterKnife.bind(this, view);
+            return view;
         }
-        //初始化ButterKnife
-        unbinder = ButterKnife.bind(this, rootView);
-        //创建presenter
-        mPresenter = createPresenter();
-        mPresenter.attachView((V) this);
-        //初始化页面
-        init();
-        return rootView;
+        return null;
     }
 
-    public void shortToast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    @SuppressWarnings("unchecked")
+    protected P initPresenter() {
+        return (P) AnnotationHelper.createPresenter(getClass());
     }
 
-    public void longToast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+    @CallSuper
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+        presenter.detachView();
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
-        mPresenter.detachView();
+    public void shortToast(String msg) {
+        checkNotNull(getActivity());
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public RxAppCompatActivity getRxActivity() {
+        return null;
+    }
+
+    @Override
+    public RxFragment getRxFragment() {
+        return this;
+    }
+
+    @Override
+    public void setStatusColor(int color) {
+        StatusUtil.setUseStatusBarColor(getActivity(), color);
+    }
+
+    @Override
+    public void setSystemInvadeBlack(boolean black) {
+        // 第二个参数是是否沉浸,第三个参数是状态栏字体是否为黑色。
+        StatusUtil.setSystemStatus(getActivity(), false, black);
     }
 }
