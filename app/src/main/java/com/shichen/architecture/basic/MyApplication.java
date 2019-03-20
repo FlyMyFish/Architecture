@@ -11,18 +11,27 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.shichen.architecture.BuildConfig;
 import com.shichen.architecture.R;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.commonsdk.UMConfigure;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 /**
  * @author shichen 754314442@qq.com
  * Created by Administrator on 2018/9/28.
  */
-public class MyApplication extends Application{
+public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
         ZXingLibrary.initDisplayOpinion(this);
+        //友盟统计
+        UMConfigure.init(this, BuildConfig.UMENG_APPKEY, null, UMConfigure.DEVICE_TYPE_PHONE, null);
+        UMConfigure.setLogEnabled(BuildConfig.DEBUG);
+        UMConfigure.setEncryptEnabled(true);
+        MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
+        MobclickAgent.setCatchUncaughtExceptions(true);
     }
 
     //static 代码段可以防止内存泄露

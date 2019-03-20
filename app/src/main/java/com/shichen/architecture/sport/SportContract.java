@@ -8,10 +8,10 @@ import com.shichen.architecture.basic.BaseContract;
  */
 public interface SportContract {
     interface View extends BaseContract.View{
-
+        void setCategory(String category);
     }
 
     interface Presenter extends BaseContract.Presenter<SportContract.View>{
-
+        void start();
     }
 }

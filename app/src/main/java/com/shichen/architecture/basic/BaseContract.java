@@ -2,9 +2,11 @@ package com.shichen.architecture.basic;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
-import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
-import com.trello.rxlifecycle2.components.support.RxFragment;
+import java.util.List;
+
+import io.reactivex.disposables.Disposable;
 
 /**
  * @author shichen 754314442@qq.com
@@ -12,13 +14,35 @@ import com.trello.rxlifecycle2.components.support.RxFragment;
  */
 public interface BaseContract {
     interface View {
+        void showLoading();
+
+        void disMissLoading();
+
         void shortToast(String msg);
+
+        void logMsg(String TAG, String msg, Throwable e);
+
+        void logMsg(String TAG, String msg);
+
         void init();
+
         void setStatusColor(int color);
-        void setSystemInvadeBlack(boolean black);
+
         Context getContext();
-        RxAppCompatActivity getRxActivity();
-        RxFragment getRxFragment();
+
+        void subscribe(Disposable d);
+
+        void unSubscribe();
+
+        void checkPermissions(String... permissions);
+
+        void allPermissionsOk(String[] permissions);
+
+        void permissionsDenied(List<String> deniedPermissions);
+
+        void setImmerse(boolean immerse, boolean black);
+
+        void onFailed(@Nullable String msg, @Nullable Throwable e);
     }
 
     interface Presenter<V extends BaseContract.View> {

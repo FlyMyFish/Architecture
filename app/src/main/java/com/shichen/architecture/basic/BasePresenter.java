@@ -12,8 +12,8 @@ import java.lang.ref.WeakReference;
  */
 public abstract class BasePresenter<V extends BaseContract.View> implements BaseContract.Presenter<V> {
     private Bundle stateBundle;
-    //弱引用view
-    private Reference<V> view;
+    protected int STATUS_OK=1;
+    protected V view;
 
     @Override
     public Bundle getStateBundle() {
@@ -24,25 +24,24 @@ public abstract class BasePresenter<V extends BaseContract.View> implements Base
 
     @Override
     final public void attachView(V view) {
-        this.view = new WeakReference<>(view);
+        this.view = view;
     }
 
     @Override
     final public void detachView() {
         if (view != null) {
-            view.clear();
             view = null;
         }
     }
 
     @Override
     final public V getView() {
-        return view.get();
+        return view;
     }
 
     @Override
     final public boolean isViewAttached() {
-        return view != null && view.get() != null;
+        return view != null;
     }
 
     @CallSuper
@@ -56,7 +55,7 @@ public abstract class BasePresenter<V extends BaseContract.View> implements Base
     @Override
     public void onPresenterCreated() {
         if (isViewAttached()) {
-            view.get().init();
+            view.init();
         }
     }
 }

@@ -4,12 +4,16 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+def appKey="\"2a86c68373920\""
+def umengkey="\"umengkey\""
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.shichen.architecture"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -18,6 +22,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "APPKEY", appKey)
+            buildConfigField("String", "UMENG_APPKEY", umengkey)
+        }
+        debug{
+            buildConfigField("String", "APPKEY", appKey)
+            buildConfigField("String", "UMENG_APPKEY", umengkey)
         }
     }
 }
@@ -31,6 +41,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
     implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintVersion"
     implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     implementation "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
@@ -38,9 +49,6 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitVersion"
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
-    implementation "com.trello.rxlifecycle2:rxlifecycle:$rootProject.rxlifecycleVersion"
-    implementation "com.trello.rxlifecycle2:rxlifecycle-android:$rootProject.rxlifecycleVersion"
-    implementation "com.trello.rxlifecycle2:rxlifecycle-components:$rootProject.rxlifecycleVersion"
     implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
     implementation "com.google.guava:guava:$rootProject.guavaVersion"
     implementation "com.google.code.findbugs:jsr305:$rootProject.findbugsVersion"
@@ -53,6 +61,11 @@ dependencies {
     implementation "com.zhy:base-rvadapter:$rootProject.rvAdapterVersion"
     //二维码相关功能 https://github.com/yipianfengye/android-zxingLibrary
     implementation project(':lib-zxing')
+
+    //友盟统计
+    implementation "com.umeng.sdk:common:$rootProject.umengCommonVersion"
+    implementation "com.umeng.sdk:analytics:$rootProject.umengAnalyticsVersion"
+
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
