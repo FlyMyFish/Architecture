@@ -8,6 +8,60 @@ def appKey="\"2a86c68373920\""
 def umengkey="\"umengkey\""
 
 android {
+
+    //渠道Flavors
+    flavorDimensions("release")
+    productFlavors {
+        baidu {
+            dimension "release"
+        }
+        yingyongbao {
+            dimension "release"
+        }
+        support360 {
+            dimension "release"
+        }
+        huawei {
+            dimension "release"
+        }
+        anzhi {
+            dimension "release"
+        }
+        support91 {
+            dimension "release"
+        }
+        sougou {
+            dimension "release"
+        }
+        oppo {
+            dimension "release"
+        }
+        vivo {
+            dimension "release"
+        }
+        xiaomi {
+            dimension "release"
+        }
+        meizu {
+            dimension "release"
+        }
+        alibaba {
+            dimension "release"
+        }
+        disanfang{
+            dimension "release"
+        }
+        lenovo{
+            dimension "release"
+        }
+        samsung{
+            dimension "release"
+        }
+    }
+    productFlavors.all {
+        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.shichen.architecture"
@@ -17,6 +71,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi'//, 'armeabi-v7a', 'arm64-v8a', 'x86'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
     }
     buildTypes {
         release {
